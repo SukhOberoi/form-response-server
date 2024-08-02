@@ -6,9 +6,10 @@ const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
+require("dotenv").config();
 
 // Initialize Firebase
-var serviceAccount = JSON.parse(`${{ GOOGLE_APPLICATION_CREDENTIALS_JSON}}`)
+var serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
