@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 
 // Initialize Firebase
-var serviceAccount = JSON.parse(${{ GOOGLE_APPLICATION_CREDENTIALS_JSON}})
+var serviceAccount = JSON.parse(`${{ GOOGLE_APPLICATION_CREDENTIALS_JSON}}`)
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
