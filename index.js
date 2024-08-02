@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 
 // Initialize Firebase
-var serviceAccount = require("./qr-code-form-b7550-firebase-adminsdk-yw3t5-3b13f8fb6a.json");
+var serviceAccount = JSON.parse(${{ GOOGLE_APPLICATION_CREDENTIALS_JSON}})
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
