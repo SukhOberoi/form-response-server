@@ -5,7 +5,9 @@ const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
+const cors = require('cors');
 require("dotenv").config();
+
 
 
 var serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
@@ -18,6 +20,7 @@ db= admin.firestore()
 
 // Initialize Express
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 // Email setup
@@ -36,6 +39,14 @@ app.post('/submit-form', async (req, res) => {
     if (!name || !email) {
         return res.status(400).send('Name and email are required.');
     }
+    const snapshot = await db.collection('responses')
+    .where('email', '==', email)
+    .get();
+
+if (!snapshot.empty) {
+    return res.status(400).send('Email is already registered.');
+}
+
 
     const uuid = uuidv4();
 
