@@ -89,7 +89,7 @@ if (!snapshot.empty) {
         }
         fs.unlinkSync(qrCodePath); // Delete QR code file after sending email
         res.status(200).json({
-            message: 'Form response received, data stored, and email sent.',
+            message: 'You have been registered successfully. This QR code has been emailed to you. Present this for entry at the venue.',
             qrCode: qrCodeBase64
         });
     });
