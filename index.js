@@ -44,7 +44,7 @@ app.post('/submit-form', async (req, res) => {
     .get();
 
 if (!snapshot.empty) {
-    return res.status(400).send('Email is already registered.');
+    return res.status(400).json({ message: 'Email is already registered.' });
 }
 
 
@@ -55,6 +55,7 @@ if (!snapshot.empty) {
     // Generate QR Code
     const qrCodePath = `./qrcodes/${uuid}.png`;
     await QRCode.toFile(qrCodePath, uuid);
+    const qrCodeBase64 = fs.readFileSync(qrCodePath, { encoding: 'base64' });
     const event = "Campus Quest 3.0"
     // Send email with QR code
     const mailOptions = {
@@ -87,7 +88,10 @@ if (!snapshot.empty) {
             return res.status(500).send('Error sending email.');
         }
         fs.unlinkSync(qrCodePath); // Delete QR code file after sending email
-        res.status(200).send('Form response received, data stored, and email sent.');
+        res.status(200).json({
+            message: 'Form response received, data stored, and email sent.',
+            qrCode: qrCodeBase64
+        });
     });
 });
 
