@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const admin = require('firebase-admin');
@@ -8,7 +7,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 require("dotenv").config();
 
-// Initialize Firebase
+
 var serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
 
 admin.initializeApp({
@@ -45,20 +44,32 @@ app.post('/submit-form', async (req, res) => {
     // Generate QR Code
     const qrCodePath = `./qrcodes/${uuid}.png`;
     await QRCode.toFile(qrCodePath, uuid);
-
+    const event = "Campus Quest 3.0"
     // Send email with QR code
     const mailOptions = {
         from: 'your-email@gmail.com',
         to: email,
-        subject: 'Your QR Code',
-        text: 'Here is your QR code.',
+        subject: `Your Entry Pass for ${event}`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <h2 style="text-align: center; color: #333;">Hello ${name},</h2>
+                <p style="text-align: center; color: #555;">Thank you for registering for ${event}. Here is your QR code:</p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="cid:unique@nodemailer.com" alt="QR Code" style="width: 200px; height: 200px;"/>
+                </div>
+                <p style="text-align: center; color: #555;">Present the QR Code while entering the venue</p>
+                <p style="text-align: center; color: #aaa;">Coding Ninjas Club SRM</p>
+            </div>
+        `,
         attachments: [
             {
                 filename: `${uuid}.png`,
-                path: qrCodePath
+                path: qrCodePath,
+                cid: 'unique@nodemailer.com'
             }
         ]
     };
+
 
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
