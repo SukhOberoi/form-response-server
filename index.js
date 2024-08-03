@@ -85,7 +85,7 @@ if (!snapshot.empty) {
 
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            return res.status(500).send('Error sending email.');
+            return res.status(500).json({message:'Error sending email.'});
         }
         fs.unlinkSync(qrCodePath); // Delete QR code file after sending email
         res.status(200).json({
