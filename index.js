@@ -34,11 +34,12 @@ const transporter = nodemailer.createTransport({
 
 // Endpoint to accept form responses
 app.post('/submit-form', async (req, res) => {
-    const { name, email } = req.body;
+    const { name, registrationNo, year, department, email, phone, whatsapp } = req.body;
 
-    if (!name || !email) {
-        return res.status(400).send('Name and email are required.');
+    if (!name || !registrationNo || !year || !department || !email || !phone || !whatsapp) {
+        return res.status(400).json({ message: 'All fields are required.' });
     }
+
     const snapshot = await db.collection('responses')
     .where('email', '==', email)
     .get();
@@ -50,7 +51,8 @@ if (!snapshot.empty) {
 
     const uuid = uuidv4();
 
-    await db.collection('responses').doc(uuid).set({ name, email });
+    await db.collection('responses').doc(uuid).set({ name, registrationNo, year, department, email, phone, whatsapp });
+
 
     // Generate QR Code
     const qrCodePath = `./qrcodes/${uuid}.png`;
