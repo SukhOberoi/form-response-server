@@ -34,9 +34,9 @@ const transporter = nodemailer.createTransport({
 
 // Endpoint to accept form responses
 app.post('/submit-form', async (req, res) => {
-    const { name, registrationNo, year, department, email, phone, whatsapp } = req.body;
+    const { name, registrationNo, year, department, email, phone, whatsapp, hackerrankId } = req.body;
 
-    if (!name || !registrationNo || !year || !department || !email || !phone || !whatsapp) {
+    if (!name || !registrationNo || !year || !department || !email || !phone || !whatsapp || !hackerrankId) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
@@ -51,7 +51,7 @@ if (!snapshot.empty) {
 
     const uuid = uuidv4();
 
-    await db.collection('responses').doc(uuid).set({ name, registrationNo, year, department, email, phone, whatsapp });
+    await db.collection('responses').doc(uuid).set({ name, registrationNo, year, department, email, phone, whatsapp, hackerrankId  });
 
 
     // Generate QR Code
