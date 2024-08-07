@@ -58,7 +58,7 @@ if (!snapshot.empty) {
     const qrCodePath = `./qrcodes/${uuid}.png`;
     await QRCode.toFile(qrCodePath, uuid);
     const qrCodeBase64 = fs.readFileSync(qrCodePath, { encoding: 'base64' });
-    const event = "Campus Quest 3.0"
+    const event = "Campus Quest Epilogue: Code, Compete, Excel"
     // Send email with QR code
     const mailOptions = {
         from: 'your-email@gmail.com',
