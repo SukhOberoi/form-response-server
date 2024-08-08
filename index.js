@@ -29,8 +29,8 @@ const limiter = rateLimit({
     max: 2, // Limit each IP to 5 requests per `window` (here, per 15 minutes)
     message: 'Too many requests from this IP, please try again after 10 minutes',
   });
-  
-// Email setup
+app.use('/submit-form', limiter);
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
