@@ -6,6 +6,7 @@ const QRCode = require('qrcode');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 require("dotenv").config();
 
 
@@ -23,6 +24,12 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 15 minutes
+    max: 2, // Limit each IP to 5 requests per `window` (here, per 15 minutes)
+    message: 'Too many requests from this IP, please try again after 10 minutes',
+  });
+  
 // Email setup
 const transporter = nodemailer.createTransport({
     service: 'gmail',
