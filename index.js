@@ -131,6 +131,9 @@ app.post("/submit-form", async (req, res) => {
   });
 });
 
+app.set("trust proxy", 1);
+app.get("/ip", (request, response) => response.send(request.ip));
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
