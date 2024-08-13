@@ -24,24 +24,27 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// Middleware to check date and time
+const checkFormOpen = (req, res, next) => {
+  const currentTime = new Date();
+  const closeTime = new Date('2024-08-13T09:30:00Z'); // 3 PM IST in UTC
+
+  if (currentTime > closeTime) {
+    return res.status(403).json({ message: "Form submissions are now closed." });
+  }
+  next();
+};
+
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 15 minutes
-  max: 2, // Limit each IP to 5 requests per `window` (here, per 15 minutes)
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 2, // Limit each IP to 2 requests per `window`
   message: "Too many requests from this IP, please try again after 10 minutes",
   statusCode: 429,
 });
 app.use("/submit-form", limiter);
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "codingninjasatsrm@gmail.com",
-    pass: process.env.appPass,
-  },
-});
-
-// Endpoint to accept form responses
-app.post("/submit-form", async (req, res) => {
+// Apply the form open check middleware to the form submission route
+app.post("/submit-form", checkFormOpen, async (req, res) => {
   const {
     name,
     registrationNo,
