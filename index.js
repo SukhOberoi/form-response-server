@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 // Middleware to check date and time
 const checkFormOpen = (req, res, next) => {
   const currentTime = new Date();
-  const closeTime = new Date('2024-08-13T09:30:00Z'); // 3 PM IST in UTC
+  const closeTime = new Date('2024-08-14T09:30:00Z'); // 3 PM IST in UTC
 
   if (currentTime > closeTime) {
     return res.status(403).json({ message: "Form submissions are now closed." });
