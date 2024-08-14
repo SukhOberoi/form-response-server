@@ -120,7 +120,14 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
       },
     ],
   };
-
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "codingninjasatsrm@gmail.com",
+      pass: process.env.appPass,
+    },
+  });
+  
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       return res.status(500).json({ message: "Error sending email." });
