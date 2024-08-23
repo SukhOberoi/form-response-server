@@ -2,9 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const admin = require("firebase-admin");
 const { v4: uuidv4 } = require("uuid");
-const QRCode = require("qrcode");
 const nodemailer = require("nodemailer");
-const fs = require("fs");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 require("dotenv").config();
@@ -27,9 +25,9 @@ app.use(bodyParser.json());
 // Middleware to check date and time
 const checkFormOpen = (req, res, next) => {
   const currentTime = new Date();
-  const closeTime = new Date('2024-08-14T09:30:00Z'); // 3 PM IST in UTC
-
-  if (currentTime > closeTime) {
+  const closeTime = new Date("2024-08-14T09:30:00Z"); // 3 PM IST in UTC
+  const isOpen = true//currentTime < closeTime
+  if (!isOpen) {
     return res.status(403).json({ message: "Form submissions are now closed." });
   }
   next();
@@ -41,7 +39,7 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again after 10 minutes",
   statusCode: 429,
 });
-app.use("/submit-form", limiter);
+//app.use("/submit-form", limiter);
 
 // Apply the form open check middleware to the form submission route
 app.post("/submit-form", checkFormOpen, async (req, res) => {
@@ -52,8 +50,7 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
     department,
     email,
     phone,
-    whatsapp,
-    hackerrankId,
+    domains, // Updated to handle domains instead of individual fields
   } = req.body;
 
   if (
@@ -63,14 +60,13 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
     !department ||
     !email ||
     !phone ||
-    !whatsapp ||
-    !hackerrankId
+    !domains.length // Ensure at least one domain is selected
   ) {
     return res.status(400).json({ message: "All fields are required." });
   }
 
   const snapshot = await db
-    .collection("responses")
+    .collection("recruitment")
     .where("email", "==", email)
     .get();
 
@@ -80,63 +76,65 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
 
   const uuid = uuidv4();
 
-  await db.collection("responses").doc(uuid).set({
+  await db.collection("recruitment").doc(uuid).set({
     name,
     registrationNo,
     year,
     department,
     email,
     phone,
-    whatsapp,
-    hackerrankId,
+    domains, // Store the selected domains
   });
 
-  // Generate QR Code
-  const qrCodePath = `./qrcodes/${uuid}.png`;
-  await QRCode.toFile(qrCodePath, uuid);
-  const qrCodeBase64 = fs.readFileSync(qrCodePath, { encoding: "base64" });
-  const event = "Campus Quest Epilogue: Code, Compete, Excel";
-  // Send email with QR code
-  const mailOptions = {
-    from: "your-email@gmail.com",
-    to: email,
-    subject: `Your Entry Pass for ${event}`,
-    html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-                  <h2 style="text-align: center; color: #333;">Hello ${name},</h2>
-                  <p style="text-align: center; color: #555;">Thank you for registering for ${event}. Here is your QR code:</p>
-                  <div style="text-align: center; margin: 20px 0;">
-                      <img src="cid:unique@nodemailer.com" alt="QR Code" style="width: 200px; height: 200px;"/>
-                  </div>
-                  <p style="text-align: center; color: #555;">Present the QR Code while entering the venue</p>
-                  <p style="text-align: center; color: #aaa;">Coding Ninjas Club SRM</p>
-              </div>
-          `,
-    attachments: [
-      {
-        filename: `${uuid}.png`,
-        path: qrCodePath,
-        cid: "unique@nodemailer.com",
-      },
-    ],
+  const domainForms = {
+    "AI/ML": "https://forms.google.com",
+    "Web Dev": "https://forms.google.com",
+    "App Dev": "https://forms.google.com",
+    "Creatives": "https://forms.google.com",
+    "Sponsorships": "https://forms.google.com",
+    "Corporate": "https://forms.google.com",
+    "Editorial": "https://forms.google.com",
   };
+  
+  
+  let formLinksHtml = "<p>Here are the links to the forms for your selected domains:</p><ul>";
+  domains.forEach((domain) => {
+    if (domainForms[domain]) {
+      formLinksHtml += `<li><a href="${domainForms[domain]}" target="_blank">${domain} Form</a></li>`;
+    }
+  });
+  formLinksHtml += "</ul>";
+
+  // Send email with Google Form links
+  const mailOptions = {
+    from: "Coding Ninjas Club SRM",
+    to: email,
+    subject: `Round 1 for Coding Ninjas Club SRM Recruitment`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+        <h2 style="text-align: center; color: #333;">Hello ${name},</h2>
+        <p style="text-align: center; color: #555;">Thank you for applying to be part of Coding Ninjas Club SRM. Please complete the following form(s) by <strong>13th September</strong> as this will be your Round 1 for the recruitment process:</p>
+        ${formLinksHtml}
+        <p style="text-align: center; color: #aaa;">Coding Ninjas Club SRM</p>
+      </div>
+    `,
+  };
+  
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "codingninjasatsrm@gmail.com",
+      user: "codingninjasatsrm@gmail.com",//"codingninjasatsrm@gmail.com",
       pass: process.env.appPass,
     },
   });
-  
+
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       return res.status(500).json({ message: "Error sending email." });
     }
-    fs.unlinkSync(qrCodePath); // Delete QR code file after sending email
     res.status(200).json({
       message:
-        "You have been registered successfully. This QR code has been emailed to you. Present this for entry at the venue.",
-      qrCode: qrCodeBase64,
+        "You have been registered successfully. A confirmation email has been sent to you.",
     });
   });
 });
