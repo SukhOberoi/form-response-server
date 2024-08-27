@@ -124,7 +124,7 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
     service: "gmail",
     auth: {
       user: "codingninjasatsrm@gmail.com",//process.env.GOOGLE_EMAIL,
-      pass: process.env.GMAIL_APP_PASSWORD,
+      pass: process.env.appPass,
     },
   });
 
