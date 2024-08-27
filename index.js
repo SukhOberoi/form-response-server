@@ -131,7 +131,7 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log(error.message)
-      return res.status(500).json({ message: "Error sending email." });
+      return res.status(500).json({ message: "Error sending email. Please contact so8215@srmist.edu.in for issues." });
     }
     res.status(200).json({
       message:
