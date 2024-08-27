@@ -92,7 +92,7 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
     "App Dev": "https://forms.gle/oXieDZiehoK492jo7",
     "Creatives": "https://forms.gle/MezbLEtNouKSdpPk9",
     "Sponsorships": "https://forms.gle/qeAz4tTpAZ2aTksZA",
-    "Corporate": "https://docs.google.com/forms/d/e/1FAIpQLSeb0I2E48b6TlJ2lW0x03ACoLeFpgN9Uyy01VcCrsByPZOtNg/viewform?usp=sf_link",
+    "Corporate": "https://forms.gle/9hw52K9TvAa55iUd9",
     "Editorial": "https://docs.google.com/forms/d/e/1FAIpQLSfQ4eEU51giQUnwDc7e0CGBj_zMAMpgwvtZ3mGkik-UQq3IGQ/viewform",
   };
   
