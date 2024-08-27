@@ -87,13 +87,13 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
   });
 
   const domainForms = {
-    "AI/ML": "https://forms.google.com",
-    "Web Dev": "https://forms.google.com",
-    "App Dev": "https://forms.google.com",
-    "Creatives": "https://forms.google.com",
-    "Sponsorships": "https://forms.google.com",
+    "AI/ML": "https://docs.google.com/forms/d/e/1FAIpQLSc0qVZ9FXQqN8yi3V7WFHSz41LOCmdOZ9JKyqO95N-UEmKuUA/viewform?usp=sf_link",
+    "Web Dev": "https://forms.gle/xYYwbuPnm6ZJCHhi6",
+    "App Dev": "https://forms.gle/oXieDZiehoK492jo7",
+    "Creatives": "https://forms.gle/MezbLEtNouKSdpPk9",
+    "Sponsorships": "https://forms.gle/qeAz4tTpAZ2aTksZA",
     "Corporate": "https://forms.google.com",
-    "Editorial": "https://forms.google.com",
+    "Editorial": "https://docs.google.com/forms/d/e/1FAIpQLSfQ4eEU51giQUnwDc7e0CGBj_zMAMpgwvtZ3mGkik-UQq3IGQ/viewform",
   };
   
   
