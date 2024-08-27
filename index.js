@@ -123,7 +123,7 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.GOOGLE_EMAIL,//"codingninjasatsrm@gmail.com",
+      user: "codingninjasatsrm@gmail.com",//process.env.GOOGLE_EMAIL,
       pass: process.env.GMAIL_APP_PASSWORD,
     },
   });
