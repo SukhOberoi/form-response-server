@@ -39,7 +39,7 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again after 10 minutes",
   statusCode: 429,
 });
-app.use("/submit-form", limiter);
+//app.use("/submit-form", limiter);
 
 // Apply the form open check middleware to the form submission route
 app.post("/submit-form", checkFormOpen, async (req, res) => {
