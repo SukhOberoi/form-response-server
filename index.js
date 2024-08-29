@@ -140,6 +140,64 @@ app.post("/submit-form", checkFormOpen, async (req, res) => {
   });
 });
 
+app.get("/recruitments", async (req, res) => {
+  try {
+    const recruitmentSnapshot = await db.collection("recruitment").get();
+    const registered = [];
+    recruitmentSnapshot.forEach((doc) => {
+      registered.push({ id: doc.id, ...doc.data() });
+    });
+    res.status(200).json(registered);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching teams.", error: error.message });
+  }
+});
+
+
+app.get("/teams", async (req, res) => {
+  try {
+    const teamsSnapshot = await db.collection("teams").get();
+    const teams = [];
+    teamsSnapshot.forEach((doc) => {
+      teams.push({ id: doc.id, ...doc.data() });
+    });
+    res.status(200).json(teams);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching teams.", error: error.message });
+  }
+});
+
+// New endpoint: Get team members by team ID
+app.get("/team/:teamId", async (req, res) => {
+  const { teamId } = req.params;
+
+  try {
+    const teamDoc = await db.collection("teams").doc(teamId).get();
+    if (!teamDoc.exists) {
+      return res.status(404).json({ message: "Team not found." });
+    }
+
+    const teamData = teamDoc.data();
+    
+    const memberRefs = [
+      teamData.member1,
+      teamData.member2,
+      teamData.member3,
+      teamData.member4,
+    ].filter(Boolean);
+    
+    const memberPromises = memberRefs.map(ref => ref.get());
+    const memberDocs = await Promise.all(memberPromises);
+    const members = memberDocs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    res.status(200).json(members);
+  } catch (error) {
+    console.error("Error fetching team members:", error);
+    res.status(500).json({ message: "Error fetching team members.", error: error });
+  }
+
+});
+
 app.set("trust proxy", 1);
 app.get("/ip", (request, response) => response.send(request.ip));
 
