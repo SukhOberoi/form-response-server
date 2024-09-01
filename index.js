@@ -190,17 +190,23 @@ app.get("/team/:teamId", async (req, res) => {
     const memberDocs = await Promise.all(memberPromises);
     const members = memberDocs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    res.status(200).json({
+    const response = {
       teamName: teamData.teamName,
       members: members,
-    });
+    };
+
+    if (teamData.hasOwnProperty('rsvp')) {
+      response.rsvp = teamData.rsvp;
+    }
+
+    res.status(200).json(response);
 
   } catch (error) {
     console.error("Error fetching team members:", error);
     res.status(500).json({ message: "Error fetching team members.", error: error });
   }
-
 });
+
 
 app.set("trust proxy", 1);
 app.get("/ip", (request, response) => response.send(request.ip));
