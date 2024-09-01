@@ -190,7 +190,11 @@ app.get("/team/:teamId", async (req, res) => {
     const memberDocs = await Promise.all(memberPromises);
     const members = memberDocs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    res.status(200).json(members);
+    res.status(200).json({
+      teamName: teamData.teamName,
+      members: members,
+    });
+
   } catch (error) {
     console.error("Error fetching team members:", error);
     res.status(500).json({ message: "Error fetching team members.", error: error });
